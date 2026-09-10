@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# shiro-01-ec2-basic 受入テスト雛形
+# shiro-01 / 002-ec2-basic 受入テスト雛形
 #
 # 前提:
 #   1. terraform/ 配下で `terraform apply` 済みであること

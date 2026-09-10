@@ -34,7 +34,8 @@ aws-terraform-dojo/
 ├── README.md              # このファイル
 ├── katas/                 # お題（型）
 │   ├── 001-shiro/             # 白帯
-│   │   └── 001-ec2-basic/
+│   │   ├── 001-ec2-hello/
+│   │   └── 002-ec2-basic/
 │   ├── 002-ki/                # 黄帯
 │   │   └── 001-alb-asg/
 │   ├── 003-cha/               # 茶帯
@@ -66,7 +67,7 @@ katas/<帯番号>-<帯名>/<お題番号>-<お題名>/
 ## レビュー依頼時のプロンプト例
 
 ```
-katas/001-shiro/001-ec2-basic の受入テストを実施しました。
+katas/001-shiro/001-ec2-hello の受入テストを実施しました。
 以下が terraform plan の出力と acceptance.sh の実行結果です。
 SPEC.md のMust要件を満たしているか判定してください。
 
