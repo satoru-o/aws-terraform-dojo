@@ -24,19 +24,20 @@
 
 ## 要件（Must）
 
-- [ ] `terraform/` 配下に `terraform { required_providers { ... } }` を定義し、`hashicorp/aws` プロバイダを指定していること
-- [ ] `provider "aws" { ... }` ブロックを定義し、リージョンとして `ap-northeast-1` を指定していること
 - [ ] `terraform init` がエラーなく完了すること
 - [ ] `terraform validate` がエラーなく完了すること
-- [ ] `resource` ブロックを1つも書かないこと（AWSリソースは一切作らない）
+
+> `hashicorp/aws` プロバイダの指定、リージョンの指定、`resource` ブロックを書かないことなどは、いずれも「コードの書き方」に関する申し合わせであり、`terraform init`/`terraform validate` は文法チェックしかしないため、これらの充足を`tests/acceptance.sh`で機械的に検証することはできない（AWSリソースを一切作らないこのお題では、状態を問い合わせる先すらない）。そのため以下の「推奨（Should）」に位置づける。
 
 ## 制約（禁止事項）
 
-- `resource` ブロックを書かないこと。EC2でもセキュリティグループでも、AWSリソースを表すブロックは一切禁止（このお題の範囲外）
-- リージョンを `ap-northeast-1` 以外にしないこと（以降のkataとリージョンを揃えるため）
+特になし。本お題はAWSリソースを作成しないため、`0.0.0.0/0`の全開放やIAMの過剰権限付与といった典型的な禁止事項が発生しうる余地がない。
 
 ## 推奨（Should）
 
+- `terraform { required_providers { ... } }` を定義し、`hashicorp/aws` プロバイダを指定する
+- `provider "aws" { ... }` ブロックを定義し、リージョンとして `ap-northeast-1` を指定する（以降のkataとリージョンを揃えるため）
+- `resource` ブロックはまだ書かない（次のお題 `002-ec2-only` からEC2インスタンスを追加していく）
 - backend（リモートステート）を設定する場合は `bootstrap/README.md` を参照し、`key` をこのkata専用の値にする（必須ではない。ローカルstateのままでも本お題のMust要件は満たせる）
 - ファイルを分割する場合、`terraform` ブロックと `provider` ブロックは慣例的に `main.tf`（または `versions.tf`/`provider.tf`）にまとめる
 

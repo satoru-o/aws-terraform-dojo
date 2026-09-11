@@ -19,9 +19,8 @@
 
 ## 要件（Must）
 
-- [ ] EC2インスタンスを1台起動する（`004-user-data-nginx` の内容を引き継ぐ）
-- [ ] セキュリティグループは80番のみを許可し、EC2インスタンスに紐付ける（引き続き維持する）
-- [ ] `user_data` でHTTPサーバーが自動起動し、80番ポートで何らかのレスポンス（2xx/3xx系）を返すこと（引き続き維持する）
+- [ ] セキュリティグループがTCP80番のみを許可していること（`004-user-data-nginx` の内容を引き続き維持する）
+- [ ] インスタンスの80番ポートにHTTPアクセスすると、何らかのレスポンス（2xx/3xx系）が返ること（インスタンスが起動しrunning状態であること、`user_data`でHTTPサーバーが自動起動していることの確認を兼ねる）
 - [ ] `terraform output` で、以下3つの値を出力すること
   - `instance_id`: EC2インスタンスのID
   - `public_ip`: EC2インスタンスの（パブリックまたは到達可能な）IPアドレス
@@ -44,8 +43,10 @@
 
 | # | 検証内容 | コマンド例 | 期待結果 |
 |---|---|---|---|
-| 1 | セキュリティグループのインバウンドルールが80番のみである | `terraform output` → `aws ec2 describe-security-groups` | 80番以外の許可ルールが0件 |
+| 1 | セキュリティグループのインバウンドルールが80番のみを許可している | `terraform output` → `aws ec2 describe-security-groups` | 80番の許可ルールが1件以上、かつ80番以外の許可ルールが0件 |
 | 2 | HTTPアクセスで応答が返る | `terraform output` → `curl -o /dev/null -w "%{http_code}"` | HTTPステータスコードが2xx系または3xx系 |
+
+`terraform output` の3つの値（`instance_id` / `public_ip` / `security_group_id`）は、いずれか1つでも取得できなければ `tests/acceptance.sh` がその時点で異常終了する（前提条件チェック）。
 
 ## スコープ外
 

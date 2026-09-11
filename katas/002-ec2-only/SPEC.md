@@ -23,10 +23,9 @@
 
 ## 要件（Must）
 
-- [ ] EC2インスタンスを1台起動する
-- [ ] AMIは名前に `minimal` を含まないものを使用する
-- [ ] セキュリティグループを新規作成しないこと（デフォルトセキュリティグループのまま）
-- [ ] `terraform apply` が正常に完了し、インスタンスが `running` 状態になること
+- [ ] EC2インスタンスを1台起動し、`running` 状態になること
+- [ ] インスタンスに紐付くセキュリティグループがデフォルトセキュリティグループのみであること（新規セキュリティグループを作成・アタッチしない）
+- [ ] 使用しているAMIの名前に `minimal` が含まれないこと
 
 ## 制約（禁止事項）
 
@@ -47,6 +46,8 @@
 | # | 検証内容 | コマンド例 | 期待結果 |
 |---|---|---|---|
 | 1 | インスタンスが `running` 状態である | `aws ec2 describe-instances --instance-ids "$INSTANCE_ID"` | `State.Name` = `running` |
+| 2 | セキュリティグループがデフォルトのみである | `aws ec2 describe-instances` の `SecurityGroups` | `GroupName` が `default` のみ |
+| 3 | AMI名に `minimal` を含まない | `describe-instances` で取得した `ImageId` を `aws ec2 describe-images` に渡す | `Name` に `minimal`（大小文字問わず）を含まない |
 
 ## スコープ外
 
@@ -57,4 +58,4 @@
 
 ## 難易度スコア
 
-4.5点（S=1, R=1, 深さ=0, エッジ=0, T=1）
+7.5点（S=1, R=1, 深さ=0, エッジ=0, T=3）

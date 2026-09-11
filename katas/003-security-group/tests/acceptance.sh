@@ -24,27 +24,37 @@ fail() { echo "  [FAIL] $1"; FAIL=$((FAIL + 1)); }
 echo "対象インスタンス: $INSTANCE_ID / SG: $SG_ID"
 echo
 
-echo "== テスト1: インバウンドルールが80番のみか =="
+echo "== テスト1: インバウンドルールが80番のみを許可しているか =="
+PORT80_RULES=$(aws ec2 describe-security-groups \
+  --group-ids "$SG_ID" \
+  --query "SecurityGroups[0].IpPermissions[?FromPort==\`80\`]" \
+  --output text)
 OTHER_PORT_RULES=$(aws ec2 describe-security-groups \
   --group-ids "$SG_ID" \
   --query "SecurityGroups[0].IpPermissions[?FromPort!=\`80\`]" \
   --output text)
-if [[ -z "$OTHER_PORT_RULES" ]]; then
-  pass "80番以外の許可ルールは存在しない"
+if [[ -n "$PORT80_RULES" && -z "$OTHER_PORT_RULES" ]]; then
+  pass "80番の許可ルールがあり、80番以外の許可ルールは存在しない"
 else
-  fail "80番以外の許可ルールが見つかりました: $OTHER_PORT_RULES"
+  PORT80_STATUS="なし"
+  [[ -n "$PORT80_RULES" ]] && PORT80_STATUS="あり"
+  fail "期待通りのルールになっていません（80番ルール: ${PORT80_STATUS} / 80番以外のルール: ${OTHER_PORT_RULES:-なし}）"
 fi
 echo
 
-echo "== テスト2: セキュリティグループがEC2インスタンスに紐付いているか =="
+echo "== テスト2: インスタンスが running 状態で、セキュリティグループが紐付いているか =="
+STATE=$(aws ec2 describe-instances \
+  --instance-ids "$INSTANCE_ID" \
+  --query 'Reservations[0].Instances[0].State.Name' \
+  --output text)
 ATTACHED=$(aws ec2 describe-instances \
   --instance-ids "$INSTANCE_ID" \
   --query "Reservations[0].Instances[0].SecurityGroups[?GroupId=='${SG_ID}']" \
   --output text)
-if [[ -n "$ATTACHED" ]]; then
-  pass "セキュリティグループがインスタンスに紐付いている"
+if [[ "$STATE" == "running" && -n "$ATTACHED" ]]; then
+  pass "インスタンスは running 状態で、セキュリティグループが紐付いている"
 else
-  fail "セキュリティグループがインスタンスに紐付いていない"
+  fail "インスタンス状態: $STATE / セキュリティグループ紐付け: $([[ -n "$ATTACHED" ]] && echo あり || echo なし)"
 fi
 echo
 

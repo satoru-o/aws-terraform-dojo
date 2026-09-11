@@ -35,6 +35,34 @@ else
 fi
 echo
 
+echo "== テスト2: セキュリティグループがデフォルトのみか =="
+SG_NAMES=$(aws ec2 describe-instances \
+  --instance-ids "$INSTANCE_ID" \
+  --query 'Reservations[0].Instances[0].SecurityGroups[].GroupName' \
+  --output text)
+if [[ "$SG_NAMES" == "default" ]]; then
+  pass "セキュリティグループは default のみ（$SG_NAMES）"
+else
+  fail "デフォルト以外のセキュリティグループが紐付いています: $SG_NAMES"
+fi
+echo
+
+echo "== テスト3: AMI名に minimal を含まないか =="
+AMI_ID=$(aws ec2 describe-instances \
+  --instance-ids "$INSTANCE_ID" \
+  --query 'Reservations[0].Instances[0].ImageId' \
+  --output text)
+AMI_NAME=$(aws ec2 describe-images \
+  --image-ids "$AMI_ID" \
+  --query 'Images[0].Name' \
+  --output text)
+if [[ "${AMI_NAME,,}" != *minimal* ]]; then
+  pass "AMI名に minimal を含まない（$AMI_NAME）"
+else
+  fail "AMI名に minimal が含まれています: $AMI_NAME"
+fi
+echo
+
 echo "======================================"
 echo " 結果: PASS=$PASS FAIL=$FAIL"
 echo "======================================"

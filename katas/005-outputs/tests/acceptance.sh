@@ -38,15 +38,21 @@ fi
 echo "WebサーバーIP: $WEB_IP / InstanceID: $INSTANCE_ID / SG: $SG_ID"
 echo
 
-echo "== テスト1: セキュリティグループのインバウンドルールが80番のみか =="
+echo "== テスト1: セキュリティグループのインバウンドルールが80番のみを許可しているか =="
+PORT80_RULES=$(aws ec2 describe-security-groups \
+  --group-ids "$SG_ID" \
+  --query "SecurityGroups[0].IpPermissions[?FromPort==\`80\`]" \
+  --output text)
 OTHER_PORT_RULES=$(aws ec2 describe-security-groups \
   --group-ids "$SG_ID" \
   --query "SecurityGroups[0].IpPermissions[?FromPort!=\`80\`]" \
   --output text)
-if [[ -z "$OTHER_PORT_RULES" ]]; then
-  pass "80番以外の許可ルールは存在しない"
+if [[ -n "$PORT80_RULES" && -z "$OTHER_PORT_RULES" ]]; then
+  pass "80番の許可ルールがあり、80番以外の許可ルールは存在しない"
 else
-  fail "80番以外の許可ルールが見つかりました: $OTHER_PORT_RULES"
+  PORT80_STATUS="なし"
+  [[ -n "$PORT80_RULES" ]] && PORT80_STATUS="あり"
+  fail "期待通りのルールになっていません（80番ルール: ${PORT80_STATUS} / 80番以外のルール: ${OTHER_PORT_RULES:-なし}）"
 fi
 echo
 

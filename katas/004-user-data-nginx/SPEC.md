@@ -21,10 +21,8 @@
 
 ## 要件（Must）
 
-- [ ] EC2インスタンスを1台起動する（`003-security-group` の内容を引き継ぐ）
-- [ ] セキュリティグループは80番のみを許可し、EC2インスタンスに紐付ける（引き続き維持する）
-- [ ] `user_data` でnginx（またはApacheなど他のHTTPサーバー）を自動インストール・自動起動する
-- [ ] インスタンスの80番ポートにHTTPアクセスすると、何らかのレスポンス（2xx/3xx系）が返ること
+- [ ] EC2インスタンスを1台起動し `running` 状態であること、かつセキュリティグループがTCP80番のみを許可してEC2インスタンスに紐付いていること（`003-security-group` の内容を引き続き維持する）
+- [ ] インスタンスの80番ポートにHTTPアクセスすると、何らかのレスポンス（2xx/3xx系）が返ること（`user_data` でHTTPサーバーが自動起動していることの確認を兼ねる）
 
 ## 制約（禁止事項）
 
@@ -39,11 +37,11 @@
 
 ## 受入テスト
 
-`tests/acceptance.sh` を参照。概要は以下の通り。`terraform output` は未定義のため、`terraform apply` 後に自分でインスタンスID・パブリックIPを確認し、環境変数として渡して実行する。
+`tests/acceptance.sh` を参照。概要は以下の通り。`terraform output` は未定義のため、`terraform apply` 後に自分でインスタンスID・セキュリティグループID・パブリックIPを確認し、環境変数として渡して実行する。
 
 | # | 検証内容 | コマンド例 | 期待結果 |
 |---|---|---|---|
-| 1 | インスタンスが `running` 状態である | `aws ec2 describe-instances` | `State.Name` = `running` |
+| 1 | インスタンスが `running` 状態であり、セキュリティグループが80番のみを許可して紐付いている | `aws ec2 describe-instances` / `aws ec2 describe-security-groups` | `State.Name` = `running`、SG紐付けあり、80番の許可ルールが1件以上かつ80番以外の許可ルールが0件 |
 | 2 | HTTPアクセスで応答が返る | `curl -o /dev/null -w "%{http_code}"` | HTTPステータスコードが2xx系または3xx系 |
 
 ## スコープ外
