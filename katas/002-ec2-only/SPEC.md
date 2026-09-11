@@ -54,8 +54,9 @@
 - セキュリティグループの作成・アタッチ（`003-security-group` で扱う）
 - HTTPサーバーの起動（`004-user-data-nginx` で扱う）
 - `terraform output`（`005-outputs` で扱う）
-- ALB・Auto Scaling Group・複数AZ構成（黄帯で扱う）
+- ALB・Auto Scaling Group・複数AZ構成（今後のお題で扱う）
 
-## 難易度スコア
+## 難易度
 
-7.5点（S=1, R=1, 深さ=0, エッジ=0, T=3）
+スコア: 7.5（S=1, R=1, 深さ=0, エッジ=0, T=3）
+カテゴリ: なし

@@ -48,9 +48,10 @@
 
 - `terraform output`（`005-outputs` で扱う）
 - HTTPS化（ACM証明書の取得・設定）
-- 送信元IPを絞り込む設計（黄帯以降で扱う）
-- ALB・Auto Scaling Group・複数AZ構成（黄帯で扱う）
+- 送信元IPを絞り込む設計（`006-restrict-source-ip` 以降で扱う）
+- ALB・Auto Scaling Group・複数AZ構成（今後のお題で扱う）
 
-## 難易度スコア
+## 難易度
 
-11点（S=1, R=2, 深さ=1, エッジ=1, T=2）
+スコア: 11（S=1, R=2, 深さ=1, エッジ=1, T=2）
+カテゴリ: なし
