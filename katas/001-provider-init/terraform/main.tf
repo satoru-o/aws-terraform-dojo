@@ -16,3 +16,14 @@ terraform {
     profile = "aws-terraform-dojo"
   }
 }
+
+provider "aws" {
+  region = "ap-northeast-1"
+
+  default_tags {
+    tags = {
+        Project = "001-provider-init"
+        ManagedBy = "terraform"
+    }
+  }
+}
