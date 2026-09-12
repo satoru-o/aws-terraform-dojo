@@ -28,14 +28,15 @@ graph LR
 
     BastionSG -.->|適用| Bastion
     WebSG -.->|適用| Web
-    BastionSG -->|"HTTP(80)のみ許可<br/>送信元=BastionSGを参照<br/>NEW（CIDRではない）"| WebSG
-    Outside -.->|"HTTP直接アクセスは不可<br/>NEW（006まではCIDR許可だった）"| Web
+    Outside -.->|"本来の経路<br/>（本お題では検証対象外）"| Bastion
+    Bastion -->|"HTTP(80)のみ許可<br/>送信元はBastionSGを参照<br/>NEW（CIDRではない）"| Web
+    Outside -.->|"006から継続: 直接アクセスは引き続き不可"| Web
 
     style BastionSG fill:#ffe9a8,stroke:#c9971f
     style Bastion fill:#ffe9a8,stroke:#c9971f
 ```
 
-`006-restrict-source-ip`までは送信元が「自分のIPの`/32`」というCIDR指定だったのに対し、今回はセキュリティグループそのものを送信元に指定する点が変更点である。踏み台サーバー自体への矢印（誰が踏み台にアクセスできるか）は、本お題のMustには含まないため図にも描いていない。
+`006-restrict-source-ip`までは、Webサーバーへのアクセスを許可するかどうかの判定が「自分のIPの`/32`」というCIDR指定だったのに対し、今回はセキュリティグループそのものを送信元に指定する点が変更点である。「外部から直接アクセスできない」こと自体は006から変わらず継続しており、007で変わるのは判定方法（CIDR→SG参照）のみである。なお、踏み台サーバーへの実際のログイン経路（Outsideから踏み台への矢印）は本お題のMustには含まれず、検証対象外の概念的な経路として図にとどめている。
 
 ## 進め方の手がかり
 
