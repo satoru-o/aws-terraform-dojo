@@ -43,11 +43,11 @@ echo
 echo "== テスト1: インバウンドルールが自分のIPの/32のみを許可しているか =="
 MATCHING_RULE=$(aws ec2 describe-security-groups \
   --group-ids "$SG_ID" \
-  --query "SecurityGroups[0].IpPermissions[?FromPort==\`80\`].IpRanges[?CidrIp=='${MY_IP}/32']" \
+  --query "SecurityGroups[0].IpPermissions[?FromPort==\`80\`].IpRanges[] | [?CidrIp=='${MY_IP}/32']" \
   --output text)
 OTHER_CIDRS=$(aws ec2 describe-security-groups \
   --group-ids "$SG_ID" \
-  --query "SecurityGroups[0].IpPermissions[?FromPort==\`80\`].IpRanges[?CidrIp!='${MY_IP}/32']" \
+  --query "SecurityGroups[0].IpPermissions[?FromPort==\`80\`].IpRanges[] | [?CidrIp!='${MY_IP}/32']" \
   --output text)
 if [[ -n "$MATCHING_RULE" && -z "$OTHER_CIDRS" ]]; then
   pass "許可CIDRは ${MY_IP}/32 のみ"

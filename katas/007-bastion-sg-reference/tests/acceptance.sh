@@ -42,7 +42,7 @@ WEB_STATE=$(aws ec2 describe-instances --instance-ids "$INSTANCE_ID" --query 'Re
 BASTION_STATE=$(aws ec2 describe-instances --instance-ids "$BASTION_INSTANCE_ID" --query 'Reservations[0].Instances[0].State.Name' --output text)
 SG_REF=$(aws ec2 describe-security-groups \
   --group-ids "$SG_ID" \
-  --query "SecurityGroups[0].IpPermissions[?FromPort==\`80\`].UserIdGroupPairs[?GroupId=='${BASTION_SG_ID}']" \
+  --query "SecurityGroups[0].IpPermissions[?FromPort==\`80\`].UserIdGroupPairs[] | [?GroupId=='${BASTION_SG_ID}']" \
   --output text)
 CIDR_RULES=$(aws ec2 describe-security-groups \
   --group-ids "$SG_ID" \

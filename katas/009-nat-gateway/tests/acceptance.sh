@@ -43,7 +43,7 @@ echo
 echo "== テスト1: WebサーバーSGのインバウンド80番が踏み台SGのみを参照しているか =="
 SG_REF=$(aws ec2 describe-security-groups \
   --group-ids "$SG_ID" \
-  --query "SecurityGroups[0].IpPermissions[?FromPort==\`80\`].UserIdGroupPairs[?GroupId=='${BASTION_SG_ID}']" \
+  --query "SecurityGroups[0].IpPermissions[?FromPort==\`80\`].UserIdGroupPairs[] | [?GroupId=='${BASTION_SG_ID}']" \
   --output text)
 CIDR_RULES=$(aws ec2 describe-security-groups \
   --group-ids "$SG_ID" \

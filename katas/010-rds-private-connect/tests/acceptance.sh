@@ -50,7 +50,7 @@ echo "== テスト1: Web SG・RDS SGがいずれもSG参照のみでCIDR許可�
 #       より厳密に「そのポートのルールが正しいか」まで確認できる。
 WEB_SG_REF=$(aws ec2 describe-security-groups \
   --group-ids "$SG_ID" \
-  --query "SecurityGroups[0].IpPermissions[?FromPort==\`80\`].UserIdGroupPairs[?GroupId=='${BASTION_SG_ID}']" \
+  --query "SecurityGroups[0].IpPermissions[?FromPort==\`80\`].UserIdGroupPairs[] | [?GroupId=='${BASTION_SG_ID}']" \
   --output text)
 WEB_SG_CIDR=$(aws ec2 describe-security-groups \
   --group-ids "$SG_ID" \
@@ -58,7 +58,7 @@ WEB_SG_CIDR=$(aws ec2 describe-security-groups \
   --output text)
 RDS_SG_REF=$(aws ec2 describe-security-groups \
   --group-ids "$RDS_SG_ID" \
-  --query "SecurityGroups[0].IpPermissions[].UserIdGroupPairs[?GroupId=='${SG_ID}']" \
+  --query "SecurityGroups[0].IpPermissions[].UserIdGroupPairs[] | [?GroupId=='${SG_ID}']" \
   --output text)
 RDS_SG_CIDR=$(aws ec2 describe-security-groups \
   --group-ids "$RDS_SG_ID" \
