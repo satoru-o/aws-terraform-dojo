@@ -65,6 +65,9 @@ resource "aws_instance" "dojo-007-ec2-bastion" {
   tags = {
     Name = "dojo-007-ec2-bastion"
   }
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group" "dojo-007-sg-bastion" {
@@ -91,6 +94,10 @@ resource "aws_vpc_security_group_egress_rule" "dojo-007-sger-bastion" {
 resource "aws_security_group" "dojo-007-sg-web" {
   name = "dojo-007-sg-web"
   description = "Security Group for Web Server"
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_vpc_security_group_ingress_rule" "dojo-007-sgir-web" {
